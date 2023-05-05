@@ -1,6 +1,12 @@
 # SSE_assignment
 Stellar structure and evolution assignment
 
+Activation of mesa_reader mkipp (Kippenhahn plotter):
+$ git clone $resepective git-repository$
+$ cd into it folder
+$ pip install .
+
+
 ToDo:
 # for rhoc-Tc plot
 - 2) overplot thicker line for evolutionary stages
