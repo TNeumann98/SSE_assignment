@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pylab as plt
-#%matplotlib inline
+from astropy import constants as const
 from scipy import constants as con
 
 # Plotting script for SSE assignment
@@ -37,34 +37,69 @@ rho_1 = rho_profile(log1, no)
 rho_2 = rho_profile(log2, no)
 
 
-#Mass vs. Temperature plot
+#density vs. Temperature plot
 #adjust plotting properties
+plt.figure(figsize=(9, 6))
 pagewidth, columnwidth = set_plot_defaults()
-fig, ax = plt.subplots(1, 1, figsize=(columnwidth, columnwidth*3/4))
+#fig, ax = plt.subplots(1, 1, figsize=(columnwidth, columnwidth*3/4))
 
-ax.plot(rho_1,Teff_1, '-.',label = r'$1M_\odot$ star', color = 'orange')
-ax.plot(rho_2,Teff_2, '--', label = r'$2M_\odot$ star', color = 'blue')
+plt.plot(rho_1,Teff_1, '-.',label = r'$1M_\odot$ star', color = 'orange')
+plt.plot(rho_2,Teff_2, '--', label = r'$2M_\odot$ star', color = 'blue')
 
-# straight line with slope 1/3
-ax.plot([-3,3,9], [8-1,8+1,8+3], ls='-', alpha = 0.5, c='lightgreen')
-ax.text(1, 8+1, r'$T_\mathrm{c} \propto \rho_\mathrm{c}^{1/3}$')
+# define regions referring the equation of state: 
+plt.text(2,10, 'Radiation', size = 15)
+plt.text(-3.5,4, 'Ideal gas', size = 15)
+plt.text(1,4, 'Non-relativistic \n degenerate gas', size = 15)
+plt.text(7.5,4, 'Relativistic \n degenerate gas', size = 15)
+# add solar core conditions :rho_sun = 1.622e2 # g/cm^3, T_sun = 1.571e7 # K (source: https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html)
+plt.plot(np.log10(1.622e2 ),np.log10(1.571e7), marker = '*',markersize = '15', label = r'Sun', color = 'orange')
 
-# flattening of evolutionary track from ~5*10^8 K on
-ax.hlines(np.log10(5e8), -3.0, 10, color='purple', linestyle='-', alpha = 0.5, linewidth=0.7)
+# from old script
+kB = const.k_B.cgs.value
+m_u = const.u.cgs.value
+pi = np.pi
+h = const.h.cgs.value
+c = const.c.cgs.value
+me = const.m_e.cgs.value
+mH = const.m_p.cgs.value
 
-# define regions referring the equation of state:
-ax.text(2,10, 'Radiation')
-ax.text(-3.5,6, 'Ideal gas')
-ax.text(1,4, 'Non-relativistic \n degenerate gas')
-ax.text(6,4, 'Relativistic \n degenerate gas')
+X, Y, Z = 0.7, 0.28, 0.02
+mu = (2*X + 3/4*Y + 1/2*Z)**-1
+mue = 2/(1+X)
 
+a = 8*pi**5*kB**4 / (15*h**3*c**3)
+Ke = h**2/(20*me) * (3/pi)**(2/3) * 1/mH**(5/3)
+Ker = h*c/8 * (3/pi)**(1/3) * 1/mH**(4/3)
 
-# add solar core conditions
-ax.plot(np.log10(150),np.log10(15000000), marker = '*', label = r'Sun', color = 'orange')
+rho = np.logspace(-4, 10, 800)
 
-ax.set_xlabel(r'log10($\rho_c$) $[kg/m^3]$')
-ax.set_ylabel(r'log10(T$_c$) $[K]$')
-ax.set_title(r'$log(\rho_c)$ -log(T$_c$)-diagram')
-plt.legend(loc = 'best', prop={'size': 7})
+T1 = (3*kB/(a*mu*m_u) * rho)**(1/3)               # hergeleitet auf schmierblock auf ipad
+T2 = Ke*rho**(2/3)/mue**(5/3) * mu*m_u/kB
+T3 = Ker*rho**(1/3)/mue**(4/3) * mu*m_u/kB
+rho4 = (Ker/Ke)**3 * mue
+T4 = (3*Ke/a * (rho/mue)**(5/3))**(1/4)
+T5 = (3*Ker/a * (rho/mue)**(4/3))**(1/4)
+
+plt.plot(np.log10(rho), np.log10(T1), color="saddlebrown", lw=3, label=r"$P_{id}=P_{rad}$")
+plt.plot(np.log10(rho[rho<rho4]), np.log10(T2[rho<rho4]), color="darkgreen", lw=3, label=r"$P_{id}=P_{NR,e}^D$")
+plt.plot(np.log10(rho[rho>rho4]), np.log10(T2[rho>rho4]), color="darkgreen", ls=":")
+plt.plot(np.log10(rho[rho<rho4]), np.log10(T3[rho<rho4]), color="darkmagenta", ls=":")
+plt.plot(np.log10(rho[rho>rho4]), np.log10(T3[rho>rho4]), color="darkmagenta", lw=3, label=r"$P_{id}=P_{ER,e}^D$")
+plt.plot(np.log10(len(T2[T2<T3])*[rho4]), np.log10(T2[T2<T3]), color="black", lw=3, label=r"$P_{NR,e}^D=P_{ER,e}^D$")
+plt.plot(np.log10(rho), np.log10(T4), ls="-.", color="lightgreen", label=r"$P_{rad}=P_{NR,e}^D$")
+plt.plot(np.log10(rho), np.log10(T5), ls="--", color="peachpuff", label=r"$P_{rad}=P_{ER,e}^D$")
+
+plt.fill_between(np.log10(rho), np.log10(T1), np.log10(1e11), color=col["orange"], alpha = 0.5, label="Radiation")
+plt.fill_between(np.log10(rho[rho<rho4]), np.log10(T2[rho<=rho4]), np.log10(T1[rho<=rho4]), alpha = 0.5, color=col["sky blue"], label="Ideal Gas")
+plt.fill_between(np.log10(rho[rho>rho4]), np.log10(T3[rho>=rho4]), np.log10(T1[rho>=rho4]), alpha = 0.5, color=col["sky blue"])
+plt.fill_between(np.log10(rho[rho<rho4]), np.log10(1e3), np.log10(T2[rho<rho4]), alpha = 0.5, color=col["bluish green"], label="NR degen.")
+plt.fill_between(np.log10(rho[rho>rho4]), np.log10(1e3), np.log10(T3[rho>rho4]), alpha = 0.5, color=col["reddish purple"], label="ER degen.")
+
+plt.ylim(3,11)
+plt.xlim(-4,10)
+plt.xlabel(r'log10($\rho_c$) $[kg/m^3]$',size=15)
+plt.ylabel(r'log10(T$_c$) $[K]$',size=15)
+plt.title(r'$log(\rho_c)$ -log(T$_c$)-diagram with eos',size=18)
+plt.legend(loc = 'best', prop={'size': 8})
 plt.grid()
 plt.savefig('./figures/profile_log(Tc)_vs_log(rhoc).pdf') 
