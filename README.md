@@ -2,8 +2,12 @@
 Stellar structure and evolution assignment
 
 Activation of mesa_reader mkipp (Kippenhahn plotter):
-$ git clone $resepective git-repository$
+
+$ git clone >resepective git-repository<
+
+
 $ cd into it folder
+
 $ pip install .
 
 
