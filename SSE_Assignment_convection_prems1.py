@@ -72,10 +72,14 @@ convection_mask2_ms = R2_ms_rel >= threshhold
 pagewidth, columnwidth = set_plot_defaults()
 fig1, (ax1, ax2) = plt.subplots(2, 1, figsize=(columnwidth, columnwidth*3/4))
 
-ax1.plot(R1_prems, R1_prems_rel, '-.',label = r'$1M_\odot$ star', color = 'orange')
+ax1.plot(R1_prems, R1_prems_rel,label = r'$1M_\odot$ star', color = 'blue')
 ax1.fill_between(R1_prems, np.min(R1_prems_rel), np.max(R1_prems_rel), where=convection_mask1_prems, color='gray', alpha=0.4, transform=ax1.get_xaxis_transform(), label='convection')
-ax2.plot(R2_prems, R2_prems_rel, '--', label = r'$2M_\odot$ star', color = 'blue')
+ax1.hlines(threshhold, np.min(R1_prems), np.max(R1_prems), color='orange', linestyle='--')
+ax1.set_xlim([0, np.max(R1_prems)])
+ax2.plot(R2_prems, R2_prems_rel, label = r'$2M_\odot$ star', color = 'blue')
 ax2.fill_between(R2_prems, np.min(R2_prems_rel), np.max(R2_prems_rel), where=convection_mask2_prems, color='gray', alpha=0.4, transform=ax2.get_xaxis_transform(), label='convection')
+ax2.hlines(threshhold, np.min(R2_prems), np.max(R2_prems), color='orange', linestyle='--')
+ax2.set_xlim([0, np.max(R2_prems)])
 
 ax1.set_ylabel(r'$\nabla_{ad}/\nabla_{rad}$')
 ax2.set_ylabel(r'$\nabla_{ad}/\nabla_{rad}$')
@@ -83,18 +87,22 @@ ax2.set_xlabel(r'Radius ($R_\odot$)')
 fig1.suptitle(r'Convection in a pre-main sequence star')
 ax1.legend(loc = 'best', prop={'size': 7})
 ax2.legend(loc = 'best', prop={'size': 7})
-ax1.grid()
-ax2.grid()
+ax1.grid(color='black', alpha=0.1)
+ax2.grid(color='black', alpha=0.1)
 # plt.show()
 plt.savefig('./figures/convection1_prems.pdf') 
 
 fig2, (ax1, ax2) = plt.subplots(2, 1, figsize=(columnwidth, columnwidth*3/4))
 
-ax1.plot(R1_ms, R1_ms_rel, label = r'$1M_\odot$ star', color = 'orange')
+ax1.plot(R1_ms, R1_ms_rel, label = r'$1M_\odot$ star', color = 'blue')
 ax1.fill_between(R1_ms, np.min(R1_ms_rel), np.max(R1_ms_rel), where=convection_mask1_ms, color='gray', alpha=0.4, transform=ax1.get_xaxis_transform(), label='convection')
+ax1.hlines(threshhold, np.min(R1_ms), np.max(R1_ms), color='orange', linestyle='--')
+ax1.set_xlim([0, np.max(R1_ms)])
 ax2.plot(R2_ms, R2_ms_rel, label = r'$2M_\odot$ star', color = 'blue')
 ax2.fill_between(R2_ms, np.min(R1_ms_rel)-2, np.max(R2_ms_rel)+2, where=convection_mask2_ms, color='gray', alpha=0.4, transform=ax2.get_xaxis_transform(), label='convection')
 ax2.set_ylim([np.min(R1_ms_rel)-0.2, np.max(R2_ms_rel)+0.2])  # Added because of weird behaviour of ax2.fill_between
+ax2.hlines(threshhold, np.min(R2_ms), np.max(R2_ms), color='orange', linestyle='--')
+ax2.set_xlim([0, np.max(R2_ms)])
 
 ax1.set_ylabel(r'$\nabla_{ad}/\nabla_{rad}$')
 ax2.set_ylabel(r'$\nabla_{ad}/\nabla_{rad}$')
@@ -102,13 +110,13 @@ ax2.set_xlabel(r'Radius ($R_\odot$)')
 fig2.suptitle(r'Convection in a main sequence star')
 ax1.legend(loc = 'best', prop={'size': 7})
 ax2.legend(loc = 'best', prop={'size': 7})
-ax1.grid()
-ax2.grid()
+ax1.grid(color='black', alpha=0.1)
+ax2.grid(color='black', alpha=0.1)
 
 # plt.show()
 plt.savefig('./figures/convection1_ms.pdf') 
 
-
+# plt.show()
 
 #--------------------------------------------------------------------------------------------
 ###try via Kippenhahn plotter [code from website: https://github.com/orlox/mkipp]

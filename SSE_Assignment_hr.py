@@ -39,13 +39,13 @@ age_max = np.max([age1_max, age2_max])
 # Star 1 gets ten times older than star 2. --> Using same colorbar for both results in a blue line.
 age1_norm = (log1_age-age1_min)/(age1_max-age1_min)
 age2_norm = (log2_age-age2_min)/(age2_max-age2_min)
-age1_colors = plt.cm.coolwarm(age1_norm)
-age2_colors = plt.cm.coolwarm(age2_norm)
+age1_colors = plt.cm.viridis(age1_norm)
+age2_colors = plt.cm.viridis(age2_norm)
 print(age1_min, age1_max)
 print(age2_min, age2_max)
 
-ax1.scatter(log1_Teff, log1_L, color=age1_colors, linewidths=0.5, label = r'1 M$_\odot$ star', marker = '.', alpha = 0.8) #edgecolors=age1_colors,
-ax2.scatter(log2_Teff, log2_L, color=age2_colors, linewidths=0.5, label = r'2 M$_\odot$ star', marker = '.', alpha = 0.8)
+ax1.scatter(log1_Teff, log1_L, color=age1_colors, linewidths=0.5, label = r'1 M$_\odot$ star', marker = '.', alpha = 0.5) #edgecolors=age1_colors,
+ax2.scatter(log2_Teff, log2_L, color=age2_colors, linewidths=0.5, label = r'2 M$_\odot$ star', marker = '.', alpha = 0.5)
 
 # ax1.plot([log1_Teff[0], log2_Teff[0]],[log1_L[0],log2_L[0]], linestyle = '', marker = 's', markeredgecolor = 'black', alpha = 0.5, label = 'Start evolution', color = 'limegreen')
 # ax1.plot([log1_Teff[-1], log2_Teff[-1]], [log1_L[-1], log2_L[-1]], linestyle = '', marker = 'o', markeredgecolor = 'black', alpha = 0.5,label = 'End evolution as wd', color = 'red')
@@ -81,7 +81,7 @@ ax2.set_ylim([-1.25, 4])
 
 divider1 = make_axes_locatable(ax1)
 cax1 = divider1.append_axes('right', size='5%', pad=0.05)
-sm = plt.cm.ScalarMappable(cmap='coolwarm')
+sm = plt.cm.ScalarMappable(cmap='viridis')
 sm.set_array([])
 divider2 = make_axes_locatable(ax2)
 cax2 = divider2.append_axes('right', size='5%', pad=0.05)
