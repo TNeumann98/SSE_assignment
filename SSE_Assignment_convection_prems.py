@@ -48,6 +48,7 @@ ax.set_xlabel(r'log(T$_c$) $[K]$')
 ax.set_title(r'$log(\rho_c)$ -log(T$_c$)-diagram')
 plt.legend(loc = 'best', prop={'size': 7})
 plt.grid()
+plt.ylim(0,3)
 #plt.show()
 plt.savefig('./figures/convection_prems.pdf') 
 
@@ -67,17 +68,19 @@ ax3 = fig.add_subplot(spec[0, 2])
 def conv(identifier, log10_on_data, prof, return_data_columns = False):
     if return_data_columns:
         return ["grada", "gradr"]
-    data = prof.get("grada")/prof.get("gradr")
+    data = prof.get("grada")-prof.get("gradr")
+    #print(prof.get("grada"),data)
     return data
     
 
-kipp_args = mkipp.Kipp_Args(logs_dirs = ['./1M_prems_to_wd/LOGS'], save_file = False, xaxis="star_age", time_units = "Myr",extractor = conv, decorate_plot = False)
+kipp_args = mkipp.Kipp_Args(logs_dirs = ['./1M_prems_to_wd/LOGS'], show_conv=True, save_file = False, xaxis="star_age", time_units = "Myr", decorate_plot = False) #extractor = conv
 
 mkipp.kipp_plot(kipp_args, axis=ax1)
 kipp_plot = mkipp.kipp_plot(kipp_args, axis=ax2)
 bar = fig.colorbar(kipp_plot.contour_plot, cax=ax3)
 
-bar.set_label("$\Delta _$adia$/ \Delta_$radi$ $") # $\\log_{10}|\\epsilon_{\\rm nuc}|$")
+bar.set_label("$\\log_{10}|\\epsilon_{\\rm nuc}|$")
+#bar.set_label("$\\Delta _{adia}/ \\Delta_{radi} $") # $\\log_{10}|\\epsilon_{\\rm nuc}|$")
 
 history = mesa_data.mesa_data("./1M_prems_to_wd/LOGS/history.data", read_data_cols = ["star_age","log_R", "center_h1", "center_he4"])
 for i, center_h1 in enumerate(history.get("center_h1")):
@@ -90,13 +93,12 @@ for i, center_he4 in enumerate(history.get("center_he4")):
         break
 ax1.set_xlim([0,age_tams])
 ax2.set_xlim([age_tams,age_hedep])
-ax2.set_xlabel("Star age (Myr)")
+ax1.set_xlabel("Star age (Myr)")
 ax2.set_xlabel("Star age (Myr)")
 ax1.set_ylabel("Stellar radius (solar radii)")
 ax2.yaxis.set_ticklabels([])
 ax3.yaxis.set_ticklabels([])
 ax1.set_title('Convecting regions: pre-ms')
 ax2.set_title('and in ms')
+plt.show()
 plt.savefig("./figures/kippenhahn_convection_1M.pdf")
-
-
