@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pylab as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 #%matplotlib inline
 from scipy import constants as con
 
@@ -12,9 +13,6 @@ import mesa_reader as mr
 log1 = mr.MesaLogDir('./1M_prems_to_wd/LOGS')
 log2 = mr.MesaLogDir('./2M_prems_to_wd/LOGS')
 
-print(log1.history.star_age[-1])
-print(log2.history.star_age[-1])
-
 
 # Hertzsprung-Russeldiagram
 
@@ -22,13 +20,30 @@ log1_L = log1.history.log_L
 log1_Teff = log1.history.log_Teff
 log2_L = log2.history.log_L
 log2_Teff = log2.history.log_Teff
+log1_age = log1.history.star_age
+log2_age = log2.history.star_age
+
 
 #adjust plotting properties
 pagewidth, columnwidth = set_plot_defaults()
 fig, ax = plt.subplots(1, 1, figsize=(columnwidth, columnwidth*3/4))
 
-ax.plot(log1_Teff, log1_L, '-.',label = r'1 M$_\odot$ star', color = 'orange')
-ax.plot(log2_Teff, log2_L, '--', label = r'2 M$_\odot$ star', color = 'red')
+age1_min = np.min(log1_age)
+age1_max = np.max(log1_age)
+age2_min = np.min(log2_age)
+age2_max = np.max(log2_age)
+age_max = np.max([age1_max, age2_max])
+
+# Star 1 gets ten times older than star 2. --> Using same colorbar for both results in a blue line.
+age1_norm = (log1_age-age1_min)/(age_max-age1_min)
+age2_norm = (log2_age-age2_min)/(age_max-age2_min)
+age1_colors = plt.cm.coolwarm(age1_norm)
+age2_colors = plt.cm.coolwarm(age2_norm)
+print(age1_min, age1_max)
+print(age2_min, age2_max)
+
+ax.scatter(log1_Teff, log1_L, edgecolors=age1_colors, color='white', linewidths=0.5, label = r'1 M$_\odot$ star', marker = '.')
+ax.scatter(log2_Teff, log2_L, edgecolors=age2_colors, color='black', linewidths=0.5, label = r'2 M$_\odot$ star', marker = '.')
 
 ax.plot([log1_Teff[0], log2_Teff[0]],[log1_L[0],log2_L[0]], linestyle = '', marker = 's', markeredgecolor = 'black', alpha = 0.5, label = 'Start evolution', color = 'green')
 ax.plot([log1_Teff[-1], log2_Teff[-1]], [log1_L[-1], log2_L[-1]], linestyle = '', marker = 'o', markeredgecolor = 'black', alpha = 0.5,label = 'End evolution as wd', color = 'red')
@@ -39,7 +54,15 @@ ax.set_title('HR-diagram: Evolutionary stages of 1/ 2 M$_\odot$ star')
 plt.legend(loc = 'best', prop={'size': 6})
 plt.grid(linewidth=0.1)
 
+divider = make_axes_locatable(ax)
+cax = divider.append_axes('right', size='5%', pad=0.05)
+sm = plt.cm.ScalarMappable(cmap='coolwarm')
+sm.set_array([])
+plt.colorbar(sm, cax=cax)
+
 ax.invert_xaxis()
+
+# plt.show()
 plt.savefig('./figures/hr_evolution.pdf')
 """
 
