@@ -26,7 +26,8 @@ log2_age = log2.history.star_age
 
 #adjust plotting properties
 pagewidth, columnwidth = set_plot_defaults()
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 6))
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 6), constrained_layout=False)
+
 # plt.figure(figsize=(9, 6))
 
 age1_min = np.min(log1_age)
@@ -43,39 +44,58 @@ age2_colors = plt.cm.coolwarm(age2_norm)
 print(age1_min, age1_max)
 print(age2_min, age2_max)
 
-ax1.scatter(log1_Teff, log1_L, edgecolors=age1_colors, color='white', linewidths=0.5, label = r'1 M$_\odot$ star', marker = '.', alpha = 0.5)
-ax2.scatter(log2_Teff, log2_L, edgecolors=age2_colors, color='black', linewidths=0.5, label = r'2 M$_\odot$ star', marker = '.', alpha = 0.5)
+ax1.scatter(log1_Teff, log1_L, color=age1_colors, linewidths=0.5, label = r'1 M$_\odot$ star', marker = '.', alpha = 0.8) #edgecolors=age1_colors,
+ax2.scatter(log2_Teff, log2_L, color=age2_colors, linewidths=0.5, label = r'2 M$_\odot$ star', marker = '.', alpha = 0.8)
 
-ax1.plot([log1_Teff[0], log2_Teff[0]],[log1_L[0],log2_L[0]], linestyle = '', marker = 's', markeredgecolor = 'black', alpha = 0.5, label = 'Start evolution', color = 'green')
-ax1.plot([log1_Teff[-1], log2_Teff[-1]], [log1_L[-1], log2_L[-1]], linestyle = '', marker = 'o', markeredgecolor = 'black', alpha = 0.5,label = 'End evolution as wd', color = 'red')
-ax2.plot([log1_Teff[0], log2_Teff[0]],[log1_L[0],log2_L[0]], linestyle = '', marker = 's', markeredgecolor = 'black', alpha = 0.5, label = 'Start evolution', color = 'green')
-ax2.plot([log1_Teff[-1], log2_Teff[-1]], [log1_L[-1], log2_L[-1]], linestyle = '', marker = 'o', markeredgecolor = 'black', alpha = 0.5,label = 'End evolution as wd', color = 'red')
+# ax1.plot([log1_Teff[0], log2_Teff[0]],[log1_L[0],log2_L[0]], linestyle = '', marker = 's', markeredgecolor = 'black', alpha = 0.5, label = 'Start evolution', color = 'limegreen')
+# ax1.plot([log1_Teff[-1], log2_Teff[-1]], [log1_L[-1], log2_L[-1]], linestyle = '', marker = 'o', markeredgecolor = 'black', alpha = 0.5,label = 'End evolution as wd', color = 'red')
+# ax2.plot([log1_Teff[0], log2_Teff[0]],[log1_L[0],log2_L[0]], linestyle = '', marker = 's', markeredgecolor = 'black', alpha = 0.5, label = 'Start evolution', color = 'mediumorchid')
+# ax2.plot([log1_Teff[-1], log2_Teff[-1]], [log1_L[-1], log2_L[-1]], linestyle = '', marker = 'o', markeredgecolor = 'black', alpha = 0.5,label = 'End evolution as wd', color = 'red')
 
-ax1.set_xlabel(r'$\log\,T_\mathrm{eff}/\mathrm{K}$')
+ax1.scatter(log1_Teff[0], log1_L[0], marker = 's', edgecolor = 'black' , alpha=0.5, label = 'Start evolution for 1 M$_\odot$ star', color = 'limegreen')
+ax1.scatter(log2_Teff[0], log2_L[0], marker = 's', edgecolor = 'black' , alpha=0.5, label = 'Start evolution for 2 M$_\odot$ star', color = 'mediumorchid')
+ax1.scatter(log1_Teff[-1], log1_L[-1], marker = 'o', edgecolor = 'black' , alpha=0.5, label = 'End evolution for 1 M$_\odot$ star', color = 'limegreen')
+ax1.scatter(log2_Teff[-1], log2_L[-1], marker = 'o', edgecolor = 'black' , alpha=0.5, label = 'End evolution for 2 M$_\odot$ star', color = 'mediumorchid')
+
+ax2.scatter(log1_Teff[0], log1_L[0], marker = 's', edgecolor = 'black' , alpha=0.5, label = 'Start evolution for 1 M$_\odot$ star', color = 'limegreen')
+ax2.scatter(log2_Teff[0], log2_L[0], marker = 's', edgecolor = 'black' , alpha=0.5, label = 'Start evolution for 2 M$_\odot$ star', color = 'mediumorchid')
+ax2.scatter(log1_Teff[-1], log1_L[-1], marker = 'o', edgecolor = 'black' , alpha=0.5, label = 'End evolution for 1 M$_\odot$ star', color = 'limegreen')
+ax2.scatter(log2_Teff[-1], log2_L[-1], marker = 'o', edgecolor = 'black' , alpha=0.5, label = 'End evolution for 2 M$_\odot$ star', color = 'mediumorchid')
+
+
+# ax1.set_xlabel(r'$\log\,T_\mathrm{eff}/\mathrm{K}$')
 ax2.set_xlabel(r'$\log\,T_\mathrm{eff}/\mathrm{K}$')
-plt.ylabel(r'$\log\,L/\mathrm{L}_\odot$')
-plt.title('HR-diagram: Evolutionary stages of 1/ 2 M$_\odot$ star')
-plt.legend(loc = 'best', prop={'size': 6})
-plt.grid(linewidth=0.1)
+ax1.set_ylabel(r'$\log\,L/\mathrm{L}_\odot$')
+ax2.set_ylabel(r'$\log\,L/\mathrm{L}_\odot$')
+fig.suptitle('HR-diagram: Evolutionary stages of 1/ 2 M$_\odot$ star')
+ax1.set_title(r'1 M$_\odot$ star')
+ax2.set_title(r'2 M$_\odot$ star')
+ax1.legend(loc = 'best', prop={'size': 6})
+ax2.legend(loc = 'best', prop={'size': 6})
+ax1.grid(linewidth=0.1)
+ax2.grid(linewidth=0.1)
+ax1.set_xlim([5.25, 3.25])
+ax2.set_xlim([5.25, 3.25])
+ax1.set_ylim([-1.25, 4])
+ax2.set_ylim([-1.25, 4])
 
-divider = make_axes_locatable(ax2)
-cax = divider.append_axes('right', size='5%', pad=0.05)
+divider1 = make_axes_locatable(ax1)
+cax1 = divider1.append_axes('right', size='5%', pad=0.05)
 sm = plt.cm.ScalarMappable(cmap='coolwarm')
-print(sm)
-# sm.set_array([])
-print(np.linspace(age1_min, age1_max, 6))
+sm.set_array([])
+divider2 = make_axes_locatable(ax2)
+cax2 = divider2.append_axes('right', size='5%', pad=0.05)
 
-cbar = plt.colorbar(sm, ticks=np.linspace(0, 1, 6))
-cbar.ax.set_yticklabels(np.linspace(0, age1_max/10**9, 6))
+# fig.subplots_adjust(right=0.2) # or whatever
+cbar = plt.colorbar(sm, cax=cax1, ticks=np.linspace(0, 1, 6), orientation = 'vertical')
+cbar.ax.set_yticklabels(np.round(np.linspace(0, age1_max/10**9, 6), decimals = 2))
+cbar.set_label('Age ($\cdot 10^9$ yr)')
+cbar2 = plt.colorbar(sm, cax=cax2, ticks=np.linspace(0, 1, 6))
+cbar2.ax.set_yticklabels(np.round(np.linspace(0, age2_max/10**9, 6), decimals = 2))
+cbar2.set_label('Age ($\cdot 10^9$ yr)')
 
-
-
-ax1.invert_xaxis()
-ax2.invert_xaxis()
-# plt.tight_layout()
-
-plt.show()
-# plt.savefig('./figures/hr_evolution.pdf')
+# plt.show()
+plt.savefig('./figures/hr_evolution.pdf')
 """
 
 # Kippenhahn diagrams
