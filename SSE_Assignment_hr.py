@@ -26,7 +26,8 @@ log2_age = log2.history.star_age
 
 #adjust plotting properties
 pagewidth, columnwidth = set_plot_defaults()
-fig, ax = plt.subplots(1, 1, figsize=(columnwidth, columnwidth*3/4))
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 6))
+# plt.figure(figsize=(9, 6))
 
 age1_min = np.min(log1_age)
 age1_max = np.max(log1_age)
@@ -35,35 +36,46 @@ age2_max = np.max(log2_age)
 age_max = np.max([age1_max, age2_max])
 
 # Star 1 gets ten times older than star 2. --> Using same colorbar for both results in a blue line.
-age1_norm = (log1_age-age1_min)/(age_max-age1_min)
-age2_norm = (log2_age-age2_min)/(age_max-age2_min)
+age1_norm = (log1_age-age1_min)/(age1_max-age1_min)
+age2_norm = (log2_age-age2_min)/(age2_max-age2_min)
 age1_colors = plt.cm.coolwarm(age1_norm)
 age2_colors = plt.cm.coolwarm(age2_norm)
 print(age1_min, age1_max)
 print(age2_min, age2_max)
 
-ax.scatter(log1_Teff, log1_L, edgecolors=age1_colors, color='white', linewidths=0.5, label = r'1 M$_\odot$ star', marker = '.')
-ax.scatter(log2_Teff, log2_L, edgecolors=age2_colors, color='black', linewidths=0.5, label = r'2 M$_\odot$ star', marker = '.')
+ax1.scatter(log1_Teff, log1_L, edgecolors=age1_colors, color='white', linewidths=0.5, label = r'1 M$_\odot$ star', marker = '.', alpha = 0.5)
+ax2.scatter(log2_Teff, log2_L, edgecolors=age2_colors, color='black', linewidths=0.5, label = r'2 M$_\odot$ star', marker = '.', alpha = 0.5)
 
-ax.plot([log1_Teff[0], log2_Teff[0]],[log1_L[0],log2_L[0]], linestyle = '', marker = 's', markeredgecolor = 'black', alpha = 0.5, label = 'Start evolution', color = 'green')
-ax.plot([log1_Teff[-1], log2_Teff[-1]], [log1_L[-1], log2_L[-1]], linestyle = '', marker = 'o', markeredgecolor = 'black', alpha = 0.5,label = 'End evolution as wd', color = 'red')
+ax1.plot([log1_Teff[0], log2_Teff[0]],[log1_L[0],log2_L[0]], linestyle = '', marker = 's', markeredgecolor = 'black', alpha = 0.5, label = 'Start evolution', color = 'green')
+ax1.plot([log1_Teff[-1], log2_Teff[-1]], [log1_L[-1], log2_L[-1]], linestyle = '', marker = 'o', markeredgecolor = 'black', alpha = 0.5,label = 'End evolution as wd', color = 'red')
+ax2.plot([log1_Teff[0], log2_Teff[0]],[log1_L[0],log2_L[0]], linestyle = '', marker = 's', markeredgecolor = 'black', alpha = 0.5, label = 'Start evolution', color = 'green')
+ax2.plot([log1_Teff[-1], log2_Teff[-1]], [log1_L[-1], log2_L[-1]], linestyle = '', marker = 'o', markeredgecolor = 'black', alpha = 0.5,label = 'End evolution as wd', color = 'red')
 
-ax.set_xlabel(r'$\log\,T_\mathrm{eff}/\mathrm{K}$')
-ax.set_ylabel(r'$\log\,L/\mathrm{L}_\odot$')
-ax.set_title('HR-diagram: Evolutionary stages of 1/ 2 M$_\odot$ star')
+ax1.set_xlabel(r'$\log\,T_\mathrm{eff}/\mathrm{K}$')
+ax2.set_xlabel(r'$\log\,T_\mathrm{eff}/\mathrm{K}$')
+plt.ylabel(r'$\log\,L/\mathrm{L}_\odot$')
+plt.title('HR-diagram: Evolutionary stages of 1/ 2 M$_\odot$ star')
 plt.legend(loc = 'best', prop={'size': 6})
 plt.grid(linewidth=0.1)
 
-divider = make_axes_locatable(ax)
+divider = make_axes_locatable(ax2)
 cax = divider.append_axes('right', size='5%', pad=0.05)
 sm = plt.cm.ScalarMappable(cmap='coolwarm')
-sm.set_array([])
-plt.colorbar(sm, cax=cax)
+print(sm)
+# sm.set_array([])
+print(np.linspace(age1_min, age1_max, 6))
 
-ax.invert_xaxis()
+cbar = plt.colorbar(sm, ticks=np.linspace(0, 1, 6))
+cbar.ax.set_yticklabels(np.linspace(0, age1_max/10**9, 6))
 
-# plt.show()
-plt.savefig('./figures/hr_evolution.pdf')
+
+
+ax1.invert_xaxis()
+ax2.invert_xaxis()
+# plt.tight_layout()
+
+plt.show()
+# plt.savefig('./figures/hr_evolution.pdf')
 """
 
 # Kippenhahn diagrams
