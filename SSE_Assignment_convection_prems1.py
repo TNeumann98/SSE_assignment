@@ -17,8 +17,20 @@ import mesa_reader as mr
 log1 = mr.MesaLogDir('./1M_prems_to_wd/LOGS')
 log2 = mr.MesaLogDir('./2M_prems_to_wd/LOGS')
 
-prems_profile_number = 1
-ms_profile_number = 7
+# 1 chaotic
+# 2 small parts
+# 3, 4 not convective
+# 5 only inner radii (till roughly 1/2 radius) convective
+# 6 very similar to 7
+# 8 similar to 7 but 1M has convection in center (2M closer to center than 7)
+# 9, 10 start of peak in center, both have no convection in second part of M1
+# 11, 12 peak closer and closer to center and convection stops at increasingly low radii. Radius is increasing!!! --> RGB
+
+# 8 follows description of convection in Pols!
+
+
+prems_profile_number = 2
+ms_profile_number = 8
 
 ### convection plots for pre-ms and ms
 no = -1
@@ -56,10 +68,10 @@ R1_ms = radius_profile(log1, ms_profile_number)
 R2_prems = radius_profile(log2, prems_profile_number)
 R2_ms = radius_profile(log2, ms_profile_number)
 
-R1_prems_rel = adia1_prems/rad1_prems
-R1_ms_rel = adia1_ms/rad1_ms
-R2_prems_rel = adia2_prems/rad2_prems
-R2_ms_rel = adia2_ms/rad2_ms
+R1_prems_rel = rad1_prems/adia1_prems
+R1_ms_rel = rad1_ms/adia1_ms
+R2_prems_rel = rad2_prems/adia2_prems
+R2_ms_rel = rad2_ms/adia2_ms
 
 threshhold = 1
 convection_mask1_prems = R1_prems_rel >= threshhold
@@ -74,15 +86,19 @@ fig1, (ax1, ax2) = plt.subplots(2, 1, figsize=(columnwidth, columnwidth*3/4))
 
 ax1.plot(R1_prems, R1_prems_rel,label = r'$1M_\odot$ star', color = 'blue')
 ax1.fill_between(R1_prems, np.min(R1_prems_rel), np.max(R1_prems_rel), where=convection_mask1_prems, color='gray', alpha=0.4, transform=ax1.get_xaxis_transform(), label='convection')
-ax1.hlines(threshhold, np.min(R1_prems), np.max(R1_prems), color='orange', linestyle='--')
+ax1.hlines(threshhold, np.min(R1_prems), np.max(R1_prems), color='orange', linestyle='--', label='threshhold')
 ax1.set_xlim([0, np.max(R1_prems)])
+ax1.set_ylim([1e-1, np.max(R1_prems_rel)+0.2])
+ax1.set_yscale('log')
 ax2.plot(R2_prems, R2_prems_rel, label = r'$2M_\odot$ star', color = 'blue')
 ax2.fill_between(R2_prems, np.min(R2_prems_rel), np.max(R2_prems_rel), where=convection_mask2_prems, color='gray', alpha=0.4, transform=ax2.get_xaxis_transform(), label='convection')
-ax2.hlines(threshhold, np.min(R2_prems), np.max(R2_prems), color='orange', linestyle='--')
+ax2.hlines(threshhold, np.min(R2_prems), np.max(R2_prems), color='orange', linestyle='--', label='threshhold')
 ax2.set_xlim([0, np.max(R2_prems)])
+ax2.set_ylim([1e-1, np.max(R2_prems_rel)+0.2])
+ax2.set_yscale('log')
 
-ax1.set_ylabel(r'$\nabla_{ad}/\nabla_{rad}$')
-ax2.set_ylabel(r'$\nabla_{ad}/\nabla_{rad}$')
+ax1.set_ylabel(r'$log(\frac{\nabla_{rad}}{\nabla_{adi}})$')
+ax2.set_ylabel(r'$log(\frac{\nabla_{rad}}{\nabla_{adi}})$')
 ax2.set_xlabel(r'Radius ($R_\odot$)')
 fig1.suptitle(r'Convection in a pre-main sequence star')
 ax1.legend(loc = 'best', prop={'size': 7})
@@ -92,32 +108,36 @@ ax2.grid(color='black', alpha=0.1)
 # plt.show()
 plt.savefig('./figures/convection1_prems.pdf') 
 
-fig2, (ax1, ax2) = plt.subplots(2, 1, figsize=(columnwidth, columnwidth*3/4))
+fig2, (ax3, ax4) = plt.subplots(2, 1, figsize=(columnwidth, columnwidth*3/4))
 
-ax1.plot(R1_ms, R1_ms_rel, label = r'$1M_\odot$ star', color = 'blue')
-ax1.fill_between(R1_ms, np.min(R1_ms_rel), np.max(R1_ms_rel), where=convection_mask1_ms, color='gray', alpha=0.4, transform=ax1.get_xaxis_transform(), label='convection')
-ax1.hlines(threshhold, np.min(R1_ms), np.max(R1_ms), color='orange', linestyle='--')
-ax1.set_xlim([0, np.max(R1_ms)])
-ax2.plot(R2_ms, R2_ms_rel, label = r'$2M_\odot$ star', color = 'blue')
-ax2.fill_between(R2_ms, np.min(R1_ms_rel)-2, np.max(R2_ms_rel)+2, where=convection_mask2_ms, color='gray', alpha=0.4, transform=ax2.get_xaxis_transform(), label='convection')
-ax2.set_ylim([np.min(R1_ms_rel)-0.2, np.max(R2_ms_rel)+0.2])  # Added because of weird behaviour of ax2.fill_between
-ax2.hlines(threshhold, np.min(R2_ms), np.max(R2_ms), color='orange', linestyle='--')
-ax2.set_xlim([0, np.max(R2_ms)])
+ax3.plot(R1_ms, R1_ms_rel, label = r'$1M_\odot$ star', color = 'blue')
+ax3.fill_between(R1_ms, np.min(R1_ms_rel)-2, np.max(R1_ms_rel)+2, where=convection_mask1_ms, color='gray', alpha=0.4, transform=ax3.get_xaxis_transform(), label='convection')
+ax3.hlines(threshhold, np.min(R1_ms), np.max(R1_ms), color='orange', linestyle='--', label='threshhold')
+ax3.set_xlim([0, np.max(R1_ms)])
+ax3.set_ylim([1e-1, np.max(R1_ms_rel)+0.2])  # Added because of weird behaviour of ax2.fill_between
+ax3.set_yscale('log')
+ax4.plot(R2_ms, R2_ms_rel, label = r'$2M_\odot$ star', color = 'blue')
+# ax4.fill_between(R2_ms, np.min(R2_ms_rel), np.max(R2_ms_rel), where=convection_mask2_ms, color='gray', alpha=0.4, transform=ax4.get_xaxis_transform(), label='convection')
+ax4.fill_between(R2_ms, np.min(R2_ms_rel)-2, np.max(R2_ms_rel)+2, where=convection_mask2_ms, color='gray', alpha=0.4, transform=ax4.get_xaxis_transform(), label='convection')
+ax4.set_ylim([np.min(R2_ms_rel)-0.2, np.max(R2_ms_rel)+0.2])  # Added because of weird behaviour of ax2.fill_between
+ax4.hlines(threshhold, np.min(R2_ms), np.max(R2_ms), color='orange', linestyle='--', label='threshhold')
+ax4.set_xlim([0, np.max(R2_ms)])
+ax4.set_yscale('log')
 
-ax1.set_ylabel(r'$\nabla_{ad}/\nabla_{rad}$')
-ax2.set_ylabel(r'$\nabla_{ad}/\nabla_{rad}$')
-ax2.set_xlabel(r'Radius ($R_\odot$)')
+ax3.set_ylabel(r'$log(\frac{\nabla_{rad}}{\nabla_{adi}})$')
+ax4.set_ylabel(r'$log(\frac{\nabla_{rad}}{\nabla_{adi}})$')
+ax4.set_xlabel(r'Radius ($R_\odot$)')
 fig2.suptitle(r'Convection in a main sequence star')
-ax1.legend(loc = 'best', prop={'size': 7})
-ax2.legend(loc = 'best', prop={'size': 7})
-ax1.grid(color='black', alpha=0.1)
-ax2.grid(color='black', alpha=0.1)
+ax3.legend(loc = 'best', prop={'size': 7})
+ax4.legend(loc = 'best', prop={'size': 7})
+ax3.grid(color='black', alpha=0.1)
+ax4.grid(color='black', alpha=0.1)
 
 # plt.show()
 plt.savefig('./figures/convection1_ms.pdf') 
 
-# plt.show()
-
+plt.show()
+xxx
 #--------------------------------------------------------------------------------------------
 ###try via Kippenhahn plotter [code from website: https://github.com/orlox/mkipp]
 import mkipp
