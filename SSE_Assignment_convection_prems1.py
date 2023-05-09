@@ -97,8 +97,8 @@ ax2.set_xlim([0, np.max(R2_prems)])
 ax2.set_ylim([1e-1, np.max(R2_prems_rel)+0.2])
 ax2.set_yscale('log')
 
-ax1.set_ylabel(r'$log(\frac{\nabla_{rad}}{\nabla_{adi}})$')
-ax2.set_ylabel(r'$log(\frac{\nabla_{rad}}{\nabla_{adi}})$')
+ax1.set_ylabel(r'$\frac{\nabla_{rad}}{\nabla_{adi}}$')
+ax2.set_ylabel(r'$\frac{\nabla_{rad}}{\nabla_{adi}}$')
 ax2.set_xlabel(r'Radius ($R_\odot$)')
 fig1.suptitle(r'Convection in a pre-main sequence star')
 ax1.legend(loc = 'best', prop={'size': 7})
@@ -124,8 +124,8 @@ ax4.hlines(threshhold, np.min(R2_ms), np.max(R2_ms), color='orange', linestyle='
 ax4.set_xlim([0, np.max(R2_ms)])
 ax4.set_yscale('log')
 
-ax3.set_ylabel(r'$log(\frac{\nabla_{rad}}{\nabla_{adi}})$')
-ax4.set_ylabel(r'$log(\frac{\nabla_{rad}}{\nabla_{adi}})$')
+ax3.set_ylabel(r'$\frac{\nabla_{rad}}{\nabla_{adi}}$')
+ax4.set_ylabel(r'$\frac{\nabla_{rad}}{\nabla_{adi}}$')
 ax4.set_xlabel(r'Radius ($R_\odot$)')
 fig2.suptitle(r'Convection in a main sequence star')
 ax3.legend(loc = 'best', prop={'size': 7})
@@ -135,6 +135,19 @@ ax4.grid(color='black', alpha=0.1)
 
 # plt.show()
 plt.savefig('./figures/convection1_ms.pdf') 
+
+
+# fig3, (ax5, ax6) = plt.subplots(2, 1, figsize=(columnwidth, columnwidth*3/4))
+# ax5.plot(R1_prems, rad1_prems ,label = r'rad', color = 'blue')
+# ax5.plot(R1_prems, adia1_prems ,label = r'rad', color = 'orange')
+# ax5.fill_between(R1_prems, np.min(rad1_prems), np.max(rad1_prems), where=convection_mask1_prems, color='gray', alpha=0.4, transform=ax1.get_xaxis_transform(), label='convection')
+# # ax5.hlines(threshhold, np.min(R1_prems), np.max(R1_prems), color='orange', linestyle='--', label='threshhold')
+# ax5.set_xlim([0, np.max(R1_prems)])
+# # ax5.set_ylim([1e-1, np.max(R1_prems_rel)+0.2])
+# ax5.set_yscale('log')
+
+
+
 
 plt.show()
 xxx
